@@ -2,3 +2,36 @@
     position:absolute;
     left:10;
 }
+.rating {
+    text-align: center;
+    margin-top: 120px;
+    position: relative;
+    width: 50%;
+    float: left;
+  }
+  
+//   .rate-full {
+//     &:before {
+//       display: inline-block;
+//       content: "😀";
+//       position: relative;
+//       z-index: 2;
+//     }
+//   }
+  
+//   .rate-half {
+//     &:before {
+//         display: inline-block;
+//         content: "🙂";
+//         position: relative;
+//         z-index: 2;
+//   }
+// }
+//   .rate-empty {
+//     &:before {
+//         display: inline-block;
+//         content: "🖕";
+//         position: relative;
+//         z-index: 2;
+//     }
+// }

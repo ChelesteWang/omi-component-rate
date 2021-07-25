@@ -1,5 +1,6 @@
 import { tag, WeElement, h, extractClass, render } from 'omi'
 import '@omiu/o-icon'
+import state from './utils'
 import * as css from './index.scss'
 
 interface Props {
@@ -10,7 +11,7 @@ interface Props {
   disabled?: Boolean
   icon?: String,
   color?: String,
-  svg?: String,
+  svg?: String
 }
 
 @tag('o-rate')
@@ -29,8 +30,8 @@ export default class Rate extends WeElement<Props> {
   }
 
   static propTypes = {
-    value: Number,
-    max: Number,
+    value: Number,    // 默认是有几个
+    max: Number,      // 一共有多少
     precision: Number,
     // readonly: Boolean,
     // disabled: Boolean,
@@ -39,43 +40,46 @@ export default class Rate extends WeElement<Props> {
     svg: String,
   }
 
-  onMouseover = (evt) => {
-    this.props.color = "red"
-    // this.props.value = this.props.value + 1
-    
-    console.log("onMouseover", this.props.color)
-    this.update()
+  constructor() {
+    super();
+    (this as any).state = state({
+      value: this.props.value
+    }, this)
   }
 
-  onMouseout = (evt) => {
-    this.props.color = "#f7e620"
-    // this.props.value = this.props.value - 1
-    console.log("onMouseout", this.props.color)
-    this.update()
+  onMouseover = (evt) => {
+    (this as any).state.value = evt.target.dataset['rate']
+  }
+  onMouseout = () => {
+    (this as any).state.value = this.props.value
+  }
+
+  submit(index) {
+    this.updateProps({
+      value: index
+    })
   }
 
   render(props) {
-    let fullnum = Array.from({ length: Math.floor(props.value) }, (v, k) => k + 1);
+    const value = (this as any).state.value
     let emptynum = Array.from({ length: Math.floor(props.max) }, (v, k) => k + 1)
-    return (
 
-      <div style="position: relative;">
-        <span class="rate">
-          {emptynum.map(() =>
-            <span class="rate-empty" onMouseover={this.onMouseover} onMouseout={this.onMouseout}>
-              <o-icon view='24' color="#ccc" scale='2'
-                path={props.svg} >
-              </o-icon>
-            </span>
-          )}
-        </span>
-        <span class="rate">{fullnum.map(() =>
-          <span class="rate-full">
-            <o-icon view='24' color={props.color} scale='2'
-              path={props.svg} >
+    function getCls(value: number, max: number): string {
+      if (value <= max) return '#f7e620'
+      if (value > max) return '#ccc'
+      // return 'half'
+    }
+
+    return (
+      <div className="rating">
+        {
+          emptynum.map((rate, index) => (
+            <o-icon view='24' color={getCls(index, value)} scale='2'
+              path={props.svg} onMouseover={this.onMouseover} onMouseout={this.onMouseout} onClick={this.submit.bind(this, index)} data-rate={index}>
             </o-icon>
-          </span>
-        )}</span>
+          )
+          )
+        }
       </div>
     )
   }
